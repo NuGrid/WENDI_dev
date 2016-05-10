@@ -1,6 +1,6 @@
-from IPython.html import widgets
-from IPython.utils import traitlets
 from IPython.display import display
+import ipywidgets as widgets
+import traitlets
 
 class framework():
     def __init__(self):
@@ -349,7 +349,57 @@ class framework():
         
     def set_default_display_style(self, **kwargs):
         self._default_display_style = kwargs
+    
+    def _set_options(self, obj_name, options):
+        if obj_name in self._object_list:
+            if hasattr(self._object_list[obj_name], "options"):
+                current_options = getattr(self._object_list[obj_name], "options")
+                value = getattr(self._object_list[obj_name], "value")
+                try:
+                    if value in options.values():
+                        setattr(self._object_list[obj_name], "options", options)
+                    else:
+                        temp = {value:value, options.values()[0]:options.values()[0]}
+                        setattr(self._object_list[obj_name], "options", temp)
+                        if isinstance(value, tuple):
+                            setattr(self._object_list[obj_name], "value", (options.values()[0],))
+                        else:
+                            setattr(self._object_list[obj_name], "value", options.values()[0])
+                        setattr(self._object_list[obj_name], "options", options)
+                except AttributeError:
+                    if value in options:
+                        setattr(self._object_list[obj_name], "options", options)
+                    else:
+                        temp = [value, options[0]]
+                        setattr(self._object_list[obj_name], "options", temp)
+                        if isinstance(value, tuple):
+                            setattr(self._object_list[obj_name], "value", (options[0],))
+                        else:
+                            setattr(self._object_list[obj_name], "value", options[0])
+                        setattr(self._object_list[obj_name], "options", options)
+            else:
+                raise AttributeError(obj_name+" does not have attribute options")
+        else:
+            raise ValueError("The object: "+obj_name+" is not defined!")
         
+    def _set_option_value(self, obj_name, value):#TODO remove this method
+        if obj_name in self._object_list:
+            if hasattr(self._object_list[obj_name], "value"):
+                if hasattr(self._object_list[obj_name], "options"):
+                    options = getattr(self._object_list[obj_name], "options")
+                    try:
+                        if value in options.keys():
+                            value = options[value]
+                    except AttributeError:
+                        pass
+                    setattr(self._object_list[obj_name], "value", value)
+                else:
+                    raise AttributeError(obj_name+" does not have attribute options")
+            else:
+                raise AttributeError(obj_name+" does not have attribute value")
+        else:
+            raise ValueError("The object: "+obj_name+" is not defined!")
+                
     def set_attributes(self, obj_name, **kwargs):
         if obj_name in self._object_list:
             un_ordered_keys = kwargs.keys()
@@ -357,7 +407,11 @@ class framework():
 
             for attr in self._order_of_operations: #apply attributes in a given order
                 if attr in kwargs:
-                    if hasattr(self._object_list[obj_name], attr):
+                    if attr == "options":
+                        self._set_options(obj_name, kwargs[attr])
+                    elif (attr == "value") and hasattr(self._object_list[obj_name], "options"):
+                        self._set_option_value(obj_name, kwargs[attr])
+                    elif hasattr(self._object_list[obj_name], attr):
                         try:
                             setattr(self._object_list[obj_name], attr, kwargs[attr])
                         except ValueError:
