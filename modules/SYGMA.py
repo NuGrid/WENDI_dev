@@ -18,8 +18,8 @@ from imp import load_source
 
 def start_SYGMA():
     frame = framework.framework()
-    frame.set_default_display_style(padding="0.25em",background_color="white", border_color="LightGrey", border_radius="0.5em")
-    frame.set_default_io_style(padding="0.25em", margin="0.25em", border_color="LightGrey", border_radius="0.5em")
+    frame.set_default_display_style(padding="0.25em",background_color="white", border_color="#D3D3D3", border_radius="0.5em")
+    frame.set_default_io_style(padding="0.25em", margin="0.25em", border_color="#D3D3D3", border_radius="0.5em")
     
     tablist = ["sim_page", "plot_page", "custom_imf_page", "get_table_page"]
     yield_list = {"Analytic perscription":{"Delay":"yield_tables/isotope_yield_table_MESA_only_fryer12_delay.txt",
@@ -260,7 +260,7 @@ def start_SYGMA():
     frame.set_state_attribute('use_sn1a', visible=True, description="Include SNe Ia: ", value=True)
     frame.set_state_attribute("yield_table_group", visible=True, **group_style)
     frame.set_state_attribute("yield_table_selection", visible=True, description="CCSN remnant prescription:", options=["Analytic perscription", "Ye=0.4982"], value="Ye=0.4982")
-    frame.set_state_attribute('yield_table_list', visible=True, options=yield_list["Ye=0.4982"], selected_label="Fallback at Ye")
+    frame.set_state_attribute('yield_table_list', visible=True, options=yield_list["Ye=0.4982"], value="Fallback at Ye")
     frame.set_state_links("sn1a_link", [("use_sn1a", "value"), ("sn1a_rates", "visible")], directional=True)
     
     frame.set_state_attribute('sn1a_rates', description="SNe Ia rates: ", options=['Power law', 'Exponential', 'Gaussian','Maoz12'])
@@ -301,9 +301,9 @@ def start_SYGMA():
     def yield_table_selection_handler(name, value):
         frame.set_attributes("yield_table_list", options=yield_list[value])
         if value == "Analytic perscription":
-            frame.set_attributes("yield_table_list", selected_label="Delay")
+            frame.set_attributes("yield_table_list", value="Delay")
         elif value == "Ye=0.4982":
-            frame.set_attributes("yield_table_list", selected_label="Fallback at Ye")        
+            frame.set_attributes("yield_table_list", value="Fallback at Ye")        
     
     def run_simulation(widget):
         frame.set_attributes("sim_responce", visible=False)
@@ -343,8 +343,8 @@ def start_SYGMA():
                          sn1a_rate=sn1a_rate, dt=dt,tend=tend, table=yield_table)
         frame.set_state("run_sim")
         ##force reset plottype
-        frame.set_attributes("plot_type", selected_label="Species mass", value="Species mass")
-        frame.set_attributes("plot_type", selected_label="Total mass", value="Total mass")
+        frame.set_attributes("plot_type", value="Species mass")
+        frame.set_attributes("plot_type", value="Total mass")
         
         add_run(data, name, iniZ)
         frame.update()
@@ -434,13 +434,13 @@ def start_SYGMA():
     frame.set_state_attribute("plot_name", "plot_mass_range", visible=True, value="<h2>Plot: Mass range contributions</h2><p>Only ejecta from AGB and massive stars are considered.</p>")
     
     frame.set_state_attribute("source_over_plotting_group", states_plot, visible=True, **group_style)
-    frame.set_state_attribute("source", ["plot_totmasses", "plot_mass", "plot_spectro"], visible=True, description="Yield source: ", options=["All", "AGB", "SNe Ia", "Massive"], selected_label="All")
+    frame.set_state_attribute("source", ["plot_totmasses", "plot_mass", "plot_spectro"], visible=True, description="Yield source: ", options=["All", "AGB", "SNe Ia", "Massive"], value="All")
     frame.set_state_attribute("over_plotting", visible=True, description="Over plotting", value=False, **button_style)
     frame.set_state_attribute("clear_plot", description="Clear plot", **button_style)
     frame.set_state_links("clear_plot_link", [("over_plotting", "value"), ("clear_plot", "visible")], directional=True)
     
     frame.set_state_attribute("species_group", ["plot_mass", "plot_mass_range"], visible=True, **group_style)
-    frame.set_state_attribute("iso_or_elem", visible=True, description="species type: ", options=["Elements", "Isotopes"], selected_label="Elements")
+    frame.set_state_attribute("iso_or_elem", visible=True, description="species type: ", options=["Elements", "Isotopes"], value="Elements")
     frame.set_state_attribute("species", visible=True, description="Element: ", options=elements_all, **text_box_style)
     frame.set_state_attribute("elem_numer", "plot_spectro", visible=True, description="Y-axis [X/Y], choose X: ", options=elements_all, **text_box_style)
     frame.set_state_attribute("elem_denom", "plot_spectro", visible=True, description="Y-axis [X/Y], choose Y: ", options=elements_all, **text_box_style)
@@ -645,7 +645,7 @@ def start_SYGMA():
     def load_imf_handler(widget):
         frame.set_state("load_custom_imf")
         options = ["", "Preset: default"] + list_custom_imf()
-        frame.set_attributes("list_imfs", options=options, value="", selected_label="")
+        frame.set_attributes("list_imfs", options=options, value="")
     
     def sel_custom_imf(name, value):
         if value != "":
@@ -755,7 +755,7 @@ def start_SYGMA():
     frame.set_state_attribute("warning_msg", states_plot, visible=False)
     
     frame.set_state_attribute("species_mult_group", states_sim_plot, visible=True, **group_style)
-    frame.set_state_attribute("iso_or_elem", visible=True, description="species type: ", options=["Elements", "Isotopes"], selected_label="Elements")
+    frame.set_state_attribute("iso_or_elem", visible=True, description="species type: ", options=["Elements", "Isotopes"], value="Elements")
     frame.set_state_attribute("species_mult", visible=True, description="Element: ", options=elements_sel_mult, **text_box_style)
 
     frame.set_state_attribute("get_table", states_sim_plot, visible=True, description="Get table links", **button_style)
@@ -768,7 +768,7 @@ def start_SYGMA():
                 value = tuple(elements_all)
             elif iso_or_elem == "Isotopes":
                 value = tuple(isotopes_all)
-            frame.set_attributes("species_mult", value=value, selected_labels=value)
+            frame.set_attributes("species_mult", value=value)
         frame.set_attributes("table_links", value="")
     
     def get_table_handler(widget):
