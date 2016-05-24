@@ -12,7 +12,7 @@ solfile=open(file, "w")
 #modify star data to match GN93
 #convert_solar_norm_star=['/nfs/rpod2/critter/PPN/forum.astro.keele.ac.uk_update/frames/mppnp/USEEPP/iniab1.3E-02As09.ppn','/nfs/rpod2/critter/PPN/forum.astro.keele.ac.uk_update/frames/mppnp/USEEPP/iniab1.0E-03GN93.ppn']
 convert_solar_norm_star=[None,None]
-cadc_data_path='/home/nugrid/CADC/nugrid/'
+cadc_data_path='/home/nugrid/CADC/NuGrid/'
 def start_fit(db,star):
 	convert_solar_norm_star=[None,None]	
 	starlist=[star]
