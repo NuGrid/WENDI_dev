@@ -1,7 +1,17 @@
-nugridnotebooks
-===============
+WENDIdev
+====
 
-Public NuGrid Notebooks
+Installation
+------------
 
-This is a repository for NuGrid notebooks that may be viewed at nbviewer.ipython.org
-and serve as examples for users of the NuGrid-CANFAR data exploration tools.
+``
+pip install git+https://github.com/NuGrid/WENDI_dev
+``
+
+Usage examples
+---------------
+
+#To open the SYGMA widget
+from wendi_dev import SYGMA as s
+s.start_SYGMA()
+
